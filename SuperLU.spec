@@ -2,7 +2,7 @@ Summary:	Subroutines to solve a sparse linear system A*X=B
 Summary(pl.UTF-8):	Procedury do rozwiązywania rzadkich układów równań liniowych A*X=B
 Name:		SuperLU
 Version:	4.3
-Release:	1
+Release:	2
 License:	BSD
 Group:		Libraries
 Source0:	http://crd-legacy.lbl.gov/~xiaoye/SuperLU/superlu_%{version}.tar.gz

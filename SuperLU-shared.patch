@@ -1,0 +1,65 @@
+--- SuperLU_4.3/SRC/Makefile.orig	2011-10-27 21:49:47.000000000 +0200
++++ SuperLU_4.3/SRC/Makefile	2015-05-28 18:50:54.792861306 +0200
+@@ -111,7 +111,19 @@
+ 	ilu_zcolumn_dfs.o ilu_zpanel_dfs.o ilu_zcopy_to_ucol.o \
+ 	ilu_zpivotL.o zdiagonal.o
+ 
+-all:    single double complex complex16
++ALL_SRC = \
++	$(SLUSRC) $(SLASRC) $(SCLAUX) \
++	$(DLUSRC) $(DLASRC) $(DZLAUX) \
++	$(CLUSRC) $(CLASRC) \
++	$(ZLUSRC) $(ZLASRC) \
++	$(ALLAUX) $(LAAUX)
++
++ALL_LO = $(ALL_SRC:.o=.lo)
++
++all: $(SUPERLULIB)
++
++$(SUPERLULIB): $(ALL_LO)
++	libtool --mode=link $(CC) $(LDFLAGS) $(CFLAGS) -o $(SUPERLULIB) $(ALL_LO) $(BLASLIB) -lm -rpath $(libdir)
+ 
+ single: $(SLUSRC) $(ALLAUX) $(LAAUX) $(SLASRC) $(SCLAUX)
+ 	$(ARCH) $(ARCHFLAGS) $(SUPERLULIB) \
+@@ -140,13 +152,22 @@
+ slamch.o: slamch.c ; $(CC) -c $(NOOPTS) $(CDEFS) $<
+ dlamch.o: dlamch.c ; $(CC) -c $(NOOPTS) $(CDEFS) $<
+ superlu_timer.o:  superlu_timer.c ; $(CC) -c $(NOOPTS) $<
++slamch.lo: slamch.c ; $(LIBTOOL) --mode=compile $(CC) -c $(NOOPTS) $(CDEFS) $<
++dlamch.lo: dlamch.c ; $(LIBTOOL) --mode=compile $(CC) -c $(NOOPTS) $(CDEFS) $<
++superlu_timer.lo:  superlu_timer.c ; $(LIBTOOL) --mode=compile $(CC) -c $(NOOPTS) $<
+ ##################################
+ 
+ .c.o:
+ 	$(CC) $(CFLAGS) $(CDEFS) $(BLASDEF) -c $< $(VERBOSE)
+ 
++%.lo: %.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) $(CDEFS) $(BLASDEF) -c $< $(VERBOSE)
++
+ .f.o:
+ 	$(FORTRAN) $(FFLAGS) -c $<
+ 
++%.lo: %.f
++	$(LIBTOOL) --mode=compile $(FORTRAN) $(FFLAGS) -c $<
++
+ clean:	
+ 	rm -f *.o $(SUPERLULIB)
+--- SuperLU_4.3/make.inc.orig	2011-12-12 23:34:18.000000000 +0100
++++ SuperLU_4.3/make.inc	2015-05-28 18:50:53.759528016 +0200
+@@ -22,7 +22,7 @@
+ #  The name of the libraries to be created/linked to
+ #
+ SuperLUroot	= $(HOME)/Codes/SuperLU/SuperLU_4.3
+-SUPERLULIB   	= $(SuperLUroot)/lib/libsuperlu_4.3.a
++SUPERLULIB   	= $(SuperLUroot)/lib/libsuperlu.la
+ TMGLIB       	= libtmglib.a
+ 
+ ## BLASLIB   	= $(SuperLUroot)/lib/libblas.a
+@@ -44,6 +44,7 @@
+ ARCH         = ar
+ ARCHFLAGS    = cr
+ RANLIB       = ranlib
++LIBTOOL      = libtool
+ 
+ CC           = gcc
+ CFLAGS       = -DPRNTlevel=0 -O3
