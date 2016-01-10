@@ -2,7 +2,7 @@ Summary:	Subroutines to solve a sparse linear system A*X=B
 Summary(pl.UTF-8):	Procedury do rozwiązywania rzadkich układów równań liniowych A*X=B
 Name:		SuperLU
 Version:	4.3
-Release:	2
+Release:	3
 License:	BSD
 Group:		Libraries
 Source0:	http://crd-legacy.lbl.gov/~xiaoye/SuperLU/superlu_%{version}.tar.gz
@@ -56,6 +56,9 @@ Statyczna biblioteka SuperLU.
 Summary:	SuperLU API documentation
 Summary(pl.UTF-8):	Dokumentacja API biblioteki SuperLU
 Group:		Documentation
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
 
 %description apidocs
 API documentation for SuperLU library.
@@ -64,7 +67,7 @@ API documentation for SuperLU library.
 Dokumentacja API biblioteki SuperLU.
 
 %prep
-%setup -q -n SuperLU_%{version}
+%setup -q -n %{name}_%{version}
 %patch0 -p1
 %patch1 -p1
 
