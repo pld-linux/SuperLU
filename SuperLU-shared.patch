@@ -44,22 +44,50 @@
 +
  clean:	
  	rm -f *.o $(SUPERLULIB)
---- SuperLU_4.3/make.inc.orig	2011-12-12 23:34:18.000000000 +0100
-+++ SuperLU_4.3/make.inc	2015-05-28 18:50:53.759528016 +0200
-@@ -22,7 +22,7 @@
+--- SuperLU_5.1.1/make.inc.orig	2016-03-16 18:10:52.643365074 +0100
++++ SuperLU_5.1.1/make.inc	2016-03-16 18:14:17.830023131 +0100
+@@ -15,8 +15,8 @@
+ #
  #  The name of the libraries to be created/linked to
  #
- SuperLUroot	= $(HOME)/Codes/SuperLU/SuperLU_4.3
--SUPERLULIB   	= $(SuperLUroot)/lib/libsuperlu_4.3.a
-+SUPERLULIB   	= $(SuperLUroot)/lib/libsuperlu.la
- TMGLIB       	= libtmglib.a
+-SuperLUroot	= /home/xiaoye/Dropbox/Codes/SuperLU/SuperLU_5.1.1/build
+-SUPERLULIB   	= $(SuperLUroot)/SRC/libsuperlu_5.1.1.a
++SuperLUroot	= .
++SUPERLULIB   	= $(SuperLUroot)/SRC/libsuperlu.la
  
+ TMGLIB       	= libtmglib.a
  ## BLASLIB   	= $(SuperLUroot)/lib/libblas.a
-@@ -44,6 +44,7 @@
- ARCH         = ar
+@@ -32,6 +32,7 @@
+ ARCH         = /usr/bin/ar
  ARCHFLAGS    = cr
- RANLIB       = ranlib
+ RANLIB       = /usr/bin/ranlib
 +LIBTOOL      = libtool
  
- CC           = gcc
- CFLAGS       = -DPRNTlevel=0 -O3
+ CC           = /usr/bin/cc
+ CFLAGS 	     = -O3  -DPRNTlevel=0 -DAdd_ 
+--- SuperLU_5.5.1/TESTING/MATGEN/CMakeLists.txt.orig	2015-12-04 02:06:38.000000000 +0100
++++ SuperLU_5.5.1/TESTING/MATGEN/CMakeLists.txt	2016-03-16 17:43:13.950101349 +0100
+@@ -104,4 +104,4 @@
+   )
+ endif()
+ 
+-add_library(matgen ${sources})
++add_library(matgen STATIC ${sources})
+--- SuperLU_5.1.1/SRC/CMakeLists.txt.orig	2016-01-22 05:34:21.000000000 +0100
++++ SuperLU_5.1.1/SRC/CMakeLists.txt	2016-03-16 18:17:37.826681402 +0100
+@@ -227,12 +227,14 @@
+ endif()
+ 
+ add_library(superlu_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BugFix}  ${sources} ${HEADERS})
++set_target_properties(superlu_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BugFix} PROPERTIES OUTPUT_NAME superlu VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BugFix} SOVERSION ${VERSION_MAJOR}.${VERSION_MINOR})
++target_link_libraries(superlu_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BugFix} ${BLAS_LIB} m)
+ 
+ install(TARGETS superlu_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BugFix}
+-  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
++  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}
+ )
+ 
+ install(FILES ${headers}
+-  DESTINATION ${CMAKE_INSTALL_PREFIX}/include
++  DESTINATION ${CMAKE_INSTALL_PREFIX}/include/superlu
+ )
