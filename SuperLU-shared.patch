@@ -1,70 +1,3 @@
---- SuperLU_4.3/SRC/Makefile.orig	2011-10-27 21:49:47.000000000 +0200
-+++ SuperLU_4.3/SRC/Makefile	2015-05-28 18:50:54.792861306 +0200
-@@ -111,7 +111,19 @@
- 	ilu_zcolumn_dfs.o ilu_zpanel_dfs.o ilu_zcopy_to_ucol.o \
- 	ilu_zpivotL.o zdiagonal.o
- 
--all:    single double complex complex16
-+ALL_SRC = \
-+	$(SLUSRC) $(SLASRC) $(SCLAUX) \
-+	$(DLUSRC) $(DLASRC) $(DZLAUX) \
-+	$(CLUSRC) $(CLASRC) \
-+	$(ZLUSRC) $(ZLASRC) \
-+	$(ALLAUX) $(LAAUX)
-+
-+ALL_LO = $(ALL_SRC:.o=.lo)
-+
-+all: $(SUPERLULIB)
-+
-+$(SUPERLULIB): $(ALL_LO)
-+	libtool --mode=link $(CC) $(LDFLAGS) $(CFLAGS) -o $(SUPERLULIB) $(ALL_LO) $(BLASLIB) -lm -rpath $(libdir)
- 
- single: $(SLUSRC) $(ALLAUX) $(LAAUX) $(SLASRC) $(SCLAUX)
- 	$(ARCH) $(ARCHFLAGS) $(SUPERLULIB) \
-@@ -140,13 +152,22 @@
- slamch.o: slamch.c ; $(CC) -c $(NOOPTS) $(CDEFS) $<
- dlamch.o: dlamch.c ; $(CC) -c $(NOOPTS) $(CDEFS) $<
- superlu_timer.o:  superlu_timer.c ; $(CC) -c $(NOOPTS) $<
-+slamch.lo: slamch.c ; $(LIBTOOL) --mode=compile $(CC) -c $(NOOPTS) $(CDEFS) $<
-+dlamch.lo: dlamch.c ; $(LIBTOOL) --mode=compile $(CC) -c $(NOOPTS) $(CDEFS) $<
-+superlu_timer.lo:  superlu_timer.c ; $(LIBTOOL) --mode=compile $(CC) -c $(NOOPTS) $<
- ##################################
- 
- .c.o:
- 	$(CC) $(CFLAGS) $(CDEFS) $(BLASDEF) -c $< $(VERBOSE)
- 
-+%.lo: %.c
-+	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) $(CDEFS) $(BLASDEF) -c $< $(VERBOSE)
-+
- .f.o:
- 	$(FORTRAN) $(FFLAGS) -c $<
- 
-+%.lo: %.f
-+	$(LIBTOOL) --mode=compile $(FORTRAN) $(FFLAGS) -c $<
-+
- clean:	
- 	rm -f *.o $(SUPERLULIB)
---- SuperLU_5.1.1/make.inc.orig	2016-03-16 18:10:52.643365074 +0100
-+++ SuperLU_5.1.1/make.inc	2016-03-16 18:14:17.830023131 +0100
-@@ -15,8 +15,8 @@
- #
- #  The name of the libraries to be created/linked to
- #
--SuperLUroot	= /home/xiaoye/Dropbox/Codes/SuperLU/SuperLU_5.1.1/build
--SUPERLULIB   	= $(SuperLUroot)/SRC/libsuperlu_5.1.1.a
-+SuperLUroot	= .
-+SUPERLULIB   	= $(SuperLUroot)/SRC/libsuperlu.la
- 
- TMGLIB       	= libtmglib.a
- ## BLASLIB   	= $(SuperLUroot)/lib/libblas.a
-@@ -32,6 +32,7 @@
- ARCH         = /usr/bin/ar
- ARCHFLAGS    = cr
- RANLIB       = /usr/bin/ranlib
-+LIBTOOL      = libtool
- 
- CC           = /usr/bin/cc
- CFLAGS 	     = -O3  -DPRNTlevel=0 -DAdd_ 
 --- SuperLU_5.5.1/TESTING/MATGEN/CMakeLists.txt.orig	2015-12-04 02:06:38.000000000 +0100
 +++ SuperLU_5.5.1/TESTING/MATGEN/CMakeLists.txt	2016-03-16 17:43:13.950101349 +0100
 @@ -104,4 +104,4 @@
@@ -73,16 +6,12 @@
  
 -add_library(matgen ${sources})
 +add_library(matgen STATIC ${sources})
---- SuperLU_5.1.1/SRC/CMakeLists.txt.orig	2016-01-22 05:34:21.000000000 +0100
-+++ SuperLU_5.1.1/SRC/CMakeLists.txt	2016-03-16 18:17:37.826681402 +0100
-@@ -227,12 +227,14 @@
- endif()
- 
- add_library(superlu_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BugFix}  ${sources} ${HEADERS})
-+set_target_properties(superlu_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BugFix} PROPERTIES OUTPUT_NAME superlu VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BugFix} SOVERSION ${VERSION_MAJOR}.${VERSION_MINOR})
-+target_link_libraries(superlu_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BugFix} ${BLAS_LIB} m)
- 
- install(TARGETS superlu_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BugFix}
+--- SuperLU_5.2.0/SRC/CMakeLists.txt.orig	2016-04-21 21:59:21.051327176 +0200
++++ SuperLU_5.2.0/SRC/CMakeLists.txt	2016-04-21 22:07:43.064639436 +0200
+@@ -233,9 +233,9 @@
+   VERSION ${PROJECT_VERSION} SOVERSION ${VERSION_MAJOR}
+   )
+ install(TARGETS superlu
 -  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
 +  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}
  )

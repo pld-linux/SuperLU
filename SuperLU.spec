@@ -1,12 +1,12 @@
 Summary:	Subroutines to solve a sparse linear system A*X=B
 Summary(pl.UTF-8):	Procedury do rozwiązywania rzadkich układów równań liniowych A*X=B
 Name:		SuperLU
-Version:	5.1.1
+Version:	5.2.0
 Release:	1
 License:	BSD
 Group:		Libraries
 Source0:	http://crd-legacy.lbl.gov/~xiaoye/SuperLU/superlu_%{version}.tar.gz
-# Source0-md5:	260a3cd90b2100122abff38587a8290a
+# Source0-md5:	ba3cfc93a93a8caed90bcf6f9b804ac7
 Patch0:		%{name}-shared.patch
 URL:		http://crd-legacy.lbl.gov/~xiaoye/SuperLU/
 BuildRequires:	blas-devel
@@ -63,7 +63,8 @@ Dokumentacja API biblioteki SuperLU.
 %build
 install -d build
 cd build
-%cmake ..
+%cmake .. \
+	-Denable_blaslib=OFF
 
 %{__make}
 
@@ -83,7 +84,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc README
 %attr(755,root,root) %{_libdir}/libsuperlu.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libsuperlu.so.5.1
+%attr(755,root,root) %ghost %{_libdir}/libsuperlu.so.5
 
 %files devel
 %defattr(644,root,root,755)
