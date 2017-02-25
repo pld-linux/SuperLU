@@ -1,22 +1,8 @@
---- SuperLU_5.5.1/TESTING/MATGEN/CMakeLists.txt.orig	2015-12-04 02:06:38.000000000 +0100
-+++ SuperLU_5.5.1/TESTING/MATGEN/CMakeLists.txt	2016-03-16 17:43:13.950101349 +0100
+--- SuperLU_5.2.1/TESTING/MATGEN/CMakeLists.txt.orig	2015-12-04 02:06:38.000000000 +0100
++++ SuperLU_5.2.1/TESTING/MATGEN/CMakeLists.txt	2016-03-16 17:43:13.950101349 +0100
 @@ -104,4 +104,4 @@
    )
  endif()
  
 -add_library(matgen ${sources})
 +add_library(matgen STATIC ${sources})
---- SuperLU_5.2.0/SRC/CMakeLists.txt.orig	2016-04-21 21:59:21.051327176 +0200
-+++ SuperLU_5.2.0/SRC/CMakeLists.txt	2016-04-21 22:07:43.064639436 +0200
-@@ -233,9 +233,9 @@
-   VERSION ${PROJECT_VERSION} SOVERSION ${VERSION_MAJOR}
-   )
- install(TARGETS superlu
--  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
-+  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}
- )
- 
- install(FILES ${headers}
--  DESTINATION ${CMAKE_INSTALL_PREFIX}/include
-+  DESTINATION ${CMAKE_INSTALL_PREFIX}/include/superlu
- )
