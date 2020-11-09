@@ -1,8 +1,9 @@
---- SuperLU_5.2.1/TESTING/MATGEN/CMakeLists.txt.orig	2015-12-04 02:06:38.000000000 +0100
-+++ SuperLU_5.2.1/TESTING/MATGEN/CMakeLists.txt	2016-03-16 17:43:13.950101349 +0100
-@@ -104,4 +104,4 @@
+--- superlu-5.2.2/TESTING/MATGEN/CMakeLists.txt.orig	2020-11-09 06:37:09.716973398 +0100
++++ superlu-5.2.2/TESTING/MATGEN/CMakeLists.txt	2020-11-09 09:49:38.097743784 +0100
+@@ -112,5 +112,5 @@
    )
  endif()
  
 -add_library(matgen ${sources})
 +add_library(matgen STATIC ${sources})
+ target_link_libraries(matgen superlu)

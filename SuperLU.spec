@@ -1,18 +1,19 @@
 Summary:	Subroutines to solve a sparse linear system A*X=B
 Summary(pl.UTF-8):	Procedury do rozwiązywania rzadkich układów równań liniowych A*X=B
 Name:		SuperLU
-Version:	5.2.1
-Release:	2
+Version:	5.2.2
+Release:	1
 License:	BSD
 Group:		Libraries
-Source0:	http://crd-legacy.lbl.gov/~xiaoye/SuperLU/superlu_%{version}.tar.gz
-# Source0-md5:	3a1a9bff20cb06b7d97c46d337504447
+#Source0Download: https://github.com/xiaoyeli/superlu/releases
+Source0:	https://github.com/xiaoyeli/superlu/archive/v%{version}/superlu-%{version}.tar.gz
+# Source0-md5:	1e93259572bd2412674ed809a1446bd3
 Patch0:		%{name}-shared.patch
-URL:		http://crd-legacy.lbl.gov/~xiaoye/SuperLU/
+URL:		https://portal.nersc.gov/project/sparse/superlu/
 BuildRequires:	blas-devel
 BuildRequires:	cmake >= 2.8.12
 BuildRequires:	gcc-fortran
-BuildRequires:	libtool >= 2:1.5
+BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -46,9 +47,7 @@ Pliki nagłówkowe biblioteki SuperLU.
 Summary:	SuperLU API documentation
 Summary(pl.UTF-8):	Dokumentacja API biblioteki SuperLU
 Group:		Documentation
-%if "%{_rpmversion}" >= "5"
-BuildArch:	noarch
-%endif
+%{?noarchpackage}
 
 %description apidocs
 API documentation for SuperLU library.
@@ -57,15 +56,17 @@ API documentation for SuperLU library.
 Dokumentacja API biblioteki SuperLU.
 
 %prep
-%setup -q -n %{name}_%{version}
+%setup -q -n superlu-%{version}
 %patch0 -p1
 
 %build
 install -d build
 cd build
+# .pc file generation expects relative CMAKE_INSTALL_{INCLUDE,LIB}DIR
 %cmake .. \
-	-DCMAKE_INSTALL_INCLUDEDIR=%{_includedir}/superlu \
-	-Denable_blaslib=OFF
+	-DCMAKE_INSTALL_INCLUDEDIR=include/superlu \
+	-DCMAKE_INSTALL_LIBDIR=%{_lib} \
+	-Denable_internal_blaslib=OFF
 
 %{__make}
 
@@ -83,7 +84,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README
+%doc License.txt README
 %attr(755,root,root) %{_libdir}/libsuperlu.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsuperlu.so.5
 
@@ -92,6 +93,8 @@ rm -rf $RPM_BUILD_ROOT
 %doc DOC/ug.pdf
 %attr(755,root,root) %{_libdir}/libsuperlu.so
 %{_includedir}/superlu
+%{_pkgconfigdir}/superlu.pc
+%{_libdir}/cmake/superlu
 
 %files apidocs
 %defattr(644,root,root,755)
