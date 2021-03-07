@@ -47,7 +47,7 @@ Pliki nagłówkowe biblioteki SuperLU.
 Summary:	SuperLU API documentation
 Summary(pl.UTF-8):	Dokumentacja API biblioteki SuperLU
 Group:		Documentation
-%{?noarchpackage}
+BuildArch:	noarch
 
 %description apidocs
 API documentation for SuperLU library.
