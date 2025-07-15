@@ -58,7 +58,7 @@ Dokumentacja API biblioteki SuperLU.
 
 %prep
 %setup -q -n superlu-%{version}
-%patch0 -p1
+%patch -P0 -p1
 
 %build
 install -d build
